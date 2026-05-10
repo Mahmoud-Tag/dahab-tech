@@ -21,5 +21,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::get('/projects', [ProjectController::class, 'index']);
 Route::get('/projects/{project}', [ProjectController::class, 'show']);
+Route::post('/projects/{project}/download', [ProjectController::class, 'incrementDownloads']);
 
 Route::post('/contact', [ContactController::class, 'store']);

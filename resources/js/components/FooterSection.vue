@@ -1,17 +1,18 @@
 <template>
   <footer class="footer">
     <div class="footer-inner">
-      <!-- Logo & tagline -->
       <div class="footer-brand">
         <div class="footer-logo">
-          <div class="logo-icon-sm"><i class="fas fa-code"></i></div>
-          <span class="footer-logo-text">دهب سوفتوير</span>
+          <span class="logo-icon-sm"><i class="fas fa-gem"></i></span>
+          <div>
+            <strong>دهب سوفتوير</strong>
+            <p>تطوير، تصميم، أنظمة، ومتاجر رقمية بطابع أكثر أناقة.</p>
+          </div>
         </div>
-        <p class="footer-tagline">للتطوير، البرمجة، التصميم، التسويق الرقمي </p>
       </div>
 
       <div class="footer-copy">
-        © {{ year }} دهب سوفتوير — جميع الحقوق محفوظة
+        © {{ year }} دهب سوفتوير. جميع الحقوق محفوظة.
       </div>
     </div>
   </footer>
@@ -23,44 +24,44 @@ const year = new Date().getFullYear()
 
 <style scoped>
 .footer {
-  background: #080808;
-  border-top: 1px solid rgba(201,162,39,0.15);
-  padding: 2rem 0;
+  padding: 2.6rem 0 3rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .footer-inner {
-  max-width: 1200px;
+  width: min(1180px, calc(100% - 2rem));
   margin: 0 auto;
-  padding: 0 2rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
   gap: 1rem;
+  flex-wrap: wrap;
+  color: #8e96ac;
 }
-
-.footer-brand { display: flex; flex-direction: column; gap: 0.25rem; }
 
 .footer-logo {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.85rem;
 }
 
 .logo-icon-sm {
-  width: 34px;
-  height: 34px;
-  background: linear-gradient(135deg, #f0c240, #c9a227);
-  border-radius: 7px;
-  display: flex;
+  width: 42px;
+  height: 42px;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.9rem;
-  color: #000;
+  border-radius: 14px;
+  color: #090909;
+  background: linear-gradient(135deg, #f0c240, #b8831d);
 }
 
-.footer-logo-text { font-weight: 800; color: #f0c240; font-size: 1rem; }
-.footer-tagline { font-size: 0.7rem; color: #555; padding-right: 2.8rem; }
+.footer-logo strong {
+  display: block;
+  color: #fff;
+}
 
-.footer-copy { color: #555; font-size: 0.85rem; }
+.footer-logo p {
+  margin: 0.2rem 0 0;
+}
 </style>

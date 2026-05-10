@@ -20,16 +20,28 @@
                     <i :class="project.catIcon"></i>
                     {{ project.category }}
                   </span>
-                  <span class="modal-year">{{ project.year }}</span>
+                  <span class="modal-year">
+                    <span class="lang-badges-container">
+                      <span v-for="lang in (project.language || '').split(',').map(l => l.trim()).filter(Boolean)" :key="lang" class="lang-tag">
+                        <i class="fas fa-code"></i>
+                        {{ lang }}
+                      </span>
+                    </span>
+                    <span class="mx-2">|</span>
+                    {{ project.year }}
+                  </span>
                 </div>
               </div>
 
               <!-- Information -->
               <div class="modal-info-section">
                 <h3 class="modal-title">{{ project.title }}</h3>
-                
+
                 <div class="modal-tags">
-                  <span v-for="tag in (project.tags || [])" :key="tag" class="tag-badge">{{ tag }}</span>
+                  <span v-for="lang in (project.language || '').split(',').map(l => l.trim()).filter(Boolean)" :key="lang" class="tag-badge">
+                    <i class="fas fa-code mr-1"></i>
+                    {{ lang }}
+                  </span>
                 </div>
 
                 <div class="modal-description">
@@ -58,9 +70,14 @@
                       </div>
                     </div>
                   </div>
-
                   <div class="action-group">
-                    <a v-if="project.downloadUrl" :href="project.downloadUrl" target="_blank" class="btn-download">
+                    <a 
+                      v-if="project.downloadUrl" 
+                      :href="project.downloadUrl" 
+                      target="_blank" 
+                      class="btn-download"
+                      @click="handleDownload"
+                    >
                       <i class="fas fa-cloud-download-alt"></i>
                       {{ project.type === 'resource' ? 'تحميل المصدر' : 'تحميل المشروع' }}
                     </a>
@@ -81,6 +98,7 @@
 
 <script setup>
 import { onMounted, onUnmounted, watch } from 'vue'
+import axios from 'axios'
 
 const props = defineProps({
   isOpen: Boolean,
@@ -91,6 +109,22 @@ const emit = defineEmits(['close'])
 
 const close = () => {
   emit('close')
+}
+
+const handleDownload = async () => {
+  if (!props.project || !props.project.id) return
+
+  try {
+    // Increment on the backend
+    await axios.post(`/api/projects/${props.project.id}/download`)
+    
+    // Increment locally for immediate visual update
+    if (props.project.downloads !== undefined) {
+      props.project.downloads++
+    }
+  } catch (error) {
+    console.error('Error incrementing downloads:', error)
+  }
 }
 
 // Close on escape key
@@ -250,6 +284,32 @@ onUnmounted(() => {
   color: #fff;
   font-weight: 600;
   text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.lang-badges-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.lang-tag {
+  background: rgba(201, 162, 39, 0.15);
+  border: 1px solid rgba(201, 162, 39, 0.4);
+  color: #f0c240;
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.lang-tag i {
+  font-size: 0.7rem;
+  opacity: 0.8;
 }
 
 /* ── Info section ── */

@@ -1,190 +1,262 @@
 <template>
-  <section class="hero hex-bg">
-    <!-- Animated particles -->
-    <div class="particle" style="width:8px;height:8px;top:15%;left:10%;animation-delay:0s;animation-duration:7s;"></div>
-    <div class="particle" style="width:5px;height:5px;top:30%;left:80%;animation-delay:1s;animation-duration:5s;"></div>
-    <div class="particle" style="width:10px;height:10px;top:70%;left:15%;animation-delay:2s;animation-duration:8s;"></div>
-    <div class="particle" style="width:6px;height:6px;top:60%;left:90%;animation-delay:0.5s;animation-duration:6s;"></div>
-    <div class="particle" style="width:4px;height:4px;top:85%;left:50%;animation-delay:3s;animation-duration:9s;"></div>
-
-    <div class="hero-container">
-      <!-- Text side -->
-      <div class="hero-text">
+  <section id="top" class="hero-section hex-bg">
+    <div class="hero-shell">
+      <div class="hero-copy">
         <span class="hero-badge">
-          <i class="fas fa-star"></i>
-          حلول برمجية احترافية
+          <i class="fas fa-sparkles"></i>
+          قيادة التحول الرقمي بذكاء وأناقة
         </span>
 
         <h1 class="hero-title">
-          نصمم حلول برمجية<br>
-          <span class="gold-gradient-text">احترافية ندعم نمو أعمالك</span>
+          نصمم منتجات رقمية تبدو
+          <span class="gold-gradient-text">فاخرة، سريعة، وسهلة الإدارة</span>
         </h1>
 
-        <p class="hero-desc">
-          في دهب سوفتوير نقدم تطوير مواقع وتطبيقات ومتاجر إلكترونية وأنظمة مخصصة باحترافية عالية
-          تساعدك على تحويل أفكارك إلى مشاريع ناجحة بمعايير السوق العالمية.
+        <p class="hero-description">
+          من مواقع الويب والمتاجر إلى لوحات التحكم والتطبيقات، نبني تجارب رقمية تجمع بين جمالية العرض،
+          وضوح الرسالة، واعتمادية التنفيذ حتى يظهر مشروعك كما يجب أن يظهر.
         </p>
 
-        <div class="hero-ctas">
-          <a href="https://wa.me/201234567890" target="_blank" class="btn-gold">
-            <i class="fab fa-whatsapp"></i>
-            تواصل عبر واتساب
-          </a>
-          <a href="#contact" class="btn-outline-gold">
-            <i class="fas fa-file-invoice"></i>
+        <div class="hero-actions">
+          <a href="#contact" class="btn-gold">
+            <i class="fas fa-paper-plane"></i>
             اطلب عرض سعر
           </a>
+          <a href="#portfolio" class="btn-outline-gold">
+            <i class="fas fa-eye"></i>
+            شاهد الأعمال
+          </a>
+        </div>
+
+        <div class="hero-metrics">
+          <article v-for="item in metrics" :key="item.label" class="hero-metric-card">
+            <p>{{ item.label }}</p>
+            <strong>{{ item.value }}</strong>
+            <span>{{ item.note }}</span>
+          </article>
         </div>
       </div>
 
-      <!-- Image side -->
-      <div class="hero-image-wrap">
-        <div class="hero-glow"></div>
-        <img :src="heroImg" alt="منصة دهب سوفتوير" class="hero-image" />
-      </div>
-    </div>
+      <div class="hero-visual">
+        <div class="hero-device">
+          <img :src="heroImg" alt="منصات دهب سوفتوير" class="hero-image" />
+        </div>
 
-    <!-- Bottom wave -->
-    <div class="hero-wave">
-      <svg viewBox="0 0 1440 80" preserveAspectRatio="none">
-        <path d="M0,40 C360,80 1080,0 1440,40 L1440,80 L0,80 Z" fill="#111111" opacity="0.6"/>
-      </svg>
+        <div class="hero-floating hero-floating--top">
+          <span>Luxury UX</span>
+          <strong>واجهة تبيع الفكرة قبل الشرح</strong>
+          <small>بداية قوية، تسلسل بصري مرتب، وهوية يصعب نسيانها.</small>
+        </div>
+
+        <div class="hero-floating hero-floating--bottom">
+          <span>Scalable Delivery</span>
+          <strong>منتج جاهز للنمو</strong>
+          <small>قرارات تقنية مدروسة من أول شاشة إلى لوحة التحكم.</small>
+        </div>
+      </div>
     </div>
   </section>
 </template>
 
 <script setup>
 const heroImg = '/hero-devices.png'
+
+const metrics = [
+  { label: 'نمط التنفيذ', value: 'Web + App', note: 'حلول متصلة بهوية واحدة.' },
+  { label: 'الأولوية', value: 'Performance', note: 'سرعة، وضوح، واعتمادية.' },
+  { label: 'اللغة البصرية', value: 'Premium UI', note: 'طابع راقٍ بعيد عن القوالب الجاهزة.' },
+]
 </script>
 
 <style scoped>
-.hero {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+.hero-section {
   position: relative;
+  padding: 9.5rem 0 4.5rem;
   overflow: hidden;
-  padding-top: 100px;
 }
 
-.hero-container {
-  max-width: 1200px;
+.hero-shell {
+  width: min(1180px, calc(100% - 2rem));
   margin: 0 auto;
-  padding: 3rem 2rem 5rem;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4rem;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 1.75rem;
   align-items: center;
+}
+
+
+.hero-device,
+.hero-floating,
+.hero-metric-card {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 22px 80px rgba(0, 0, 0, 0.24);
 }
 
 .hero-badge {
-  background: rgba(201,162,39,0.1);
-  border: 1px solid rgba(201,162,39,0.35);
-  color: #f0c240;
-  padding: 0.4rem 1.2rem;
-  border-radius: 100px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  margin-bottom: 1.5rem;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  padding: 0.45rem 0.95rem;
+  border-radius: 999px;
+  background: rgba(240, 194, 64, 0.08);
+  border: 1px solid rgba(240, 194, 64, 0.22);
+  color: #f1d27d;
+  font-size: 0.82rem;
+  letter-spacing: 0.12em;
 }
 
 .hero-title {
-  font-size: clamp(2rem, 4vw, 3rem);
+  font-size: clamp(2.3rem, 5vw, 4.7rem);
+  line-height: 1.15;
   font-weight: 900;
-  line-height: 1.35;
   color: #fff;
-  margin-bottom: 1.25rem;
+  margin: 1.4rem 0 1rem;
 }
 
-.hero-desc {
-  color: #a0a0a0;
+.hero-title span {
+  display: block;
+  padding: 13px 0;
+}
+
+.hero-description {
+  color: #9ea7bc;
+  line-height: 1.95;
   font-size: 1rem;
-  line-height: 1.8;
-  margin-bottom: 2.5rem;
-  max-width: 520px;
+  max-width: 640px;
 }
 
-.hero-ctas {
+.hero-actions {
   display: flex;
-  gap: 1rem;
   flex-wrap: wrap;
+  gap: 0.9rem;
+  margin-top: 2rem;
 }
 
-.hero-image-wrap {
+.hero-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.9rem;
+  margin-top: 2rem;
+}
+
+.hero-metric-card {
+  border-radius: 26px;
+  padding: 1.2rem;
+}
+
+.hero-metric-card p {
+  margin: 0;
+  color: #f0c240;
+  font-weight: 700;
+}
+
+.hero-metric-card strong {
+  display: block;
+  color: #fff;
+  margin: 0.85rem 0 0.45rem;
+  font-size: 1.4rem;
+}
+
+.hero-metric-card span {
+  color: #9ea7bc;
+  line-height: 1.8;
+  font-size: 0.9rem;
+}
+
+.hero-visual {
   position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  min-height: 540px;
 }
 
-/* Ambient glow */
-.hero-glow {
+.hero-device {
   position: absolute;
-  width: 400px;
-  height: 400px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(201,162,39,0.18) 0%, transparent 70%);
-  pointer-events: none;
-  animation: pulse 4s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%,100% { transform: scale(1); opacity: 0.8; }
-  50%      { transform: scale(1.1); opacity: 1; }
+  inset: 0;
+  border-radius: 34px;
+  padding: 1.5rem;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03)),
+    radial-gradient(circle at top, rgba(240, 194, 64, 0.14), transparent 45%);
 }
 
 .hero-image {
   width: 100%;
-  max-width: 520px;
+  height: 100%;
   object-fit: contain;
-  filter: drop-shadow(0 20px 40px rgba(201,162,39,0.25));
-  position: relative;
-  z-index: 1;
-  animation: float-img 6s ease-in-out infinite;
+  filter: drop-shadow(0 20px 45px rgba(0, 0, 0, 0.34));
 }
 
-@keyframes float-img {
-  0%,100% { transform: translateY(0px); }
-  50%      { transform: translateY(-12px); }
-}
-
-.hero-wave {
+.hero-floating {
   position: absolute;
-  bottom: 0;
-  width: 100%;
-  line-height: 0;
+  max-width: 245px;
+  border-radius: 26px;
+  padding: 1rem 1.1rem;
 }
 
-.hero-wave svg { width: 100%; height: 80px; display: block; }
+.hero-floating--top {
+  top: 1rem;
+  left: -1rem;
+}
 
-@media (max-width: 900px) {
-  .hero-container {
+.hero-floating--bottom {
+  right: -1rem;
+  bottom: 0;
+}
+
+.hero-floating span {
+  display: inline-flex;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #d8deea;
+  font-size: 0.76rem;
+}
+
+.hero-floating strong {
+  display: block;
+  margin: 0.7rem 0 0.35rem;
+  color: #fff;
+}
+
+.hero-floating small {
+  color: #9ea7bc;
+  line-height: 1.75;
+}
+
+@media (max-width: 1100px) {
+  .hero-shell {
     grid-template-columns: 1fr;
-    gap: 2rem;
-    text-align: center;
-    padding: 2rem 1.5rem 4rem;
   }
-  .hero-title {
-    font-size: 2.25rem;
+
+  .hero-visual {
+    min-height: 440px;
   }
-  .hero-desc {
-    font-size: 0.95rem;
-    margin: 0 auto 2rem;
+}
+
+@media (max-width: 860px) {
+  .hero-section {
+    padding-top: 8.5rem;
   }
-  .hero-ctas {
-    justify-content: center;
-    flex-direction: column;
-    gap: 0.75rem;
+
+  .hero-metrics {
+    grid-template-columns: 1fr;
   }
-  .btn-gold, .btn-outline-gold {
-    width: 100%;
-    justify-content: center;
+
+  .hero-visual {
+    min-height: auto;
   }
-  .hero-badge { margin: 0 auto 1.5rem; }
-  .hero-image { max-width: 280px; }
+
+  .hero-device {
+    position: relative;
+    min-height: 340px;
+  }
+
+  .hero-floating {
+    position: static;
+    max-width: none;
+    margin-top: 1rem;
+  }
 }
 </style>

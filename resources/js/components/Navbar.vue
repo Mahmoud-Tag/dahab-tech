@@ -1,46 +1,43 @@
 <template>
   <nav class="navbar" :class="{ 'navbar-scrolled': scrolled }">
-    <div class="nav-container">
-      <!-- Logo -->
-      <div class="nav-logo">
-        <div class="logo-icon">
-          <i class="fas fa-code"></i>
+    <div class="nav-shell">
+      <div class="nav-panel">
+        <a href="#top" class="nav-logo" @click="mobileOpen = false">
+          <span class="logo-icon"><i class="fas fa-gem"></i></span>
+          <span class="logo-text">
+            <strong>دهب سوفتوير</strong>
+            <small>حلول رقمية بهوية أنيقة</small>
+          </span>
+        </a>
+
+        <ul class="nav-links">
+          <li><a href="#about" class="nav-link">من نحن</a></li>
+          <li><a href="#services" class="nav-link">الخدمات</a></li>
+          <li><a href="#portfolio" class="nav-link">الأعمال</a></li>
+          <li><a href="#why-us" class="nav-link">لماذا نحن</a></li>
+          <li><a href="#contact" class="nav-link">تواصل</a></li>
+        </ul>
+
+        <div class="nav-actions">
+          <a href="#portfolio" class="btn-outline-gold">استعراض الأعمال</a>
+          <a href="#contact" class="btn-gold">ابدأ مشروعك</a>
         </div>
-        <div class="logo-text">
-          <span class="logo-main">دهب سوفتوير</span>
-          <span class="logo-sub">للحلول البرمجية</span>
-        </div>
+
+        <button class="mobile-toggle" type="button" @click="mobileOpen = !mobileOpen">
+          <i :class="mobileOpen ? 'fas fa-xmark' : 'fas fa-bars'"></i>
+        </button>
       </div>
-
-      <!-- Links -->
-      <ul class="nav-links">
-        <li><a href="#about" class="nav-link">من نحن</a></li>
-        <li><a href="#services" class="nav-link">خدماتنا</a></li>
-        <li><a href="#portfolio" class="nav-link">أعمالنا</a></li>
-        <li><a href="#why-us" class="nav-link">لماذا نحن؟</a></li>
-        <li><a href="#contact" class="nav-link">تواصل معنا</a></li>
-      </ul>
-
-      <!-- CTA -->
-      <a href="#contact" class="btn-gold nav-cta">
-        <i class="fas fa-paper-plane"></i>
-        اطلب عرض سعر
-      </a>
-
-      <!-- Mobile toggle -->
-      <button class="mobile-toggle" @click="mobileOpen = !mobileOpen">
-        <i :class="mobileOpen ? 'fas fa-times' : 'fas fa-bars'"></i>
-      </button>
     </div>
 
-    <!-- Mobile menu -->
     <div class="mobile-menu" :class="{ open: mobileOpen }">
-      <a href="#about" class="nav-link" @click="mobileOpen = false">من نحن</a>
-      <a href="#services" class="nav-link" @click="mobileOpen = false">خدماتنا</a>
-      <a href="#portfolio" class="nav-link" @click="mobileOpen = false">أعمالنا</a>
-      <a href="#why-us" class="nav-link" @click="mobileOpen = false">لماذا نحن؟</a>
-      <a href="#contact" class="nav-link" @click="mobileOpen = false">تواصل معنا</a>
-      <a href="#contact" class="btn-gold" style="margin-top:1rem;" @click="mobileOpen = false">اطلب عرض سعر</a>
+      <div class="mobile-menu-inner">
+        <a href="#about" class="nav-link" @click="mobileOpen = false">من نحن</a>
+        <a href="#services" class="nav-link" @click="mobileOpen = false">الخدمات</a>
+        <a href="#portfolio" class="nav-link" @click="mobileOpen = false">الأعمال</a>
+        <a href="#why-us" class="nav-link" @click="mobileOpen = false">لماذا نحن</a>
+        <a href="#contact" class="nav-link" @click="mobileOpen = false">تواصل</a>
+        <a href="#contact" class="btn-gold" @click="mobileOpen = false">اطلب عرضاً الآن</a>
+      </div>
     </div>
   </nav>
 </template>
@@ -51,7 +48,10 @@ import { ref, onMounted, onUnmounted } from 'vue'
 const scrolled = ref(false)
 const mobileOpen = ref(false)
 
-const handleScroll = () => { scrolled.value = window.scrollY > 50 }
+const handleScroll = () => {
+  scrolled.value = window.scrollY > 24
+}
+
 onMounted(() => window.addEventListener('scroll', handleScroll))
 onUnmounted(() => window.removeEventListener('scroll', handleScroll))
 </script>
@@ -59,109 +59,138 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
 <style scoped>
 .navbar {
   position: fixed;
-  top: 0;
-  width: 100%;
+  inset: 0 0 auto 0;
   z-index: 1000;
-  padding: 1rem 0;
-  transition: all 0.4s ease;
-  background: transparent;
+  padding: 1.15rem 0;
+  transition: padding 0.25s ease;
 }
 
 .navbar-scrolled {
-  background: rgba(10, 10, 10, 0.95);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(201, 162, 39, 0.2);
-  padding:  0;
-  box-shadow: 0 4px 30px rgba(0,0,0,0.4);
+  padding: 0.8rem 0;
 }
 
-.nav-container {
-  max-width: 1200px;
+.nav-shell {
+  width: min(1180px, calc(100% - 1.5rem));
   margin: 0 auto;
-  padding: 0.2rem 2rem;
+}
+
+.nav-panel {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 2rem;
+  gap: 1rem;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(5, 8, 22, 0.58);
+  backdrop-filter: blur(16px);
+  padding: 0.85rem 1rem;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.24);
 }
 
 .nav-logo {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.8rem;
+  color: #fff;
   text-decoration: none;
-  flex-shrink: 0;
 }
 
 .logo-icon {
   width: 48px;
   height: 48px;
-  background: linear-gradient(135deg, #f0c240, #c9a227);
-  border-radius: 10px;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.3rem;
-  color: #000;
-  box-shadow: 0 4px 15px rgba(201,162,39,0.4);
+  border-radius: 16px;
+  color: #090909;
+  background: linear-gradient(135deg, #f0c240, #b8831d);
+  box-shadow: 0 10px 24px rgba(240, 194, 64, 0.18);
 }
 
-.logo-text { display: flex; flex-direction: column; line-height: 1.1; }
-.logo-main { font-size: 1.1rem; font-weight: 800; color: #f0c240; }
-.logo-sub { font-size: 0.65rem; color: #888; font-weight: 400; }
+.logo-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.logo-text strong {
+  font-size: 1rem;
+}
+
+.logo-text small {
+  color: #8e96ac;
+  font-size: 0.72rem;
+  margin-top: 0.18rem;
+}
 
 .nav-links {
   display: flex;
+  align-items: center;
+  gap: 1.6rem;
   list-style: none;
-  gap: 2.5rem;
   margin: 0;
   padding: 0;
 }
 
-.nav-cta { font-size: 0.9rem; padding: 0.6rem 1.3rem; }
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
 
 .mobile-toggle {
   display: none;
-  background: none;
-  border: 1px solid rgba(201,162,39,0.4);
-  color: #f0c240;
-  font-size: 1.2rem;
-  padding: 0.4rem 0.7rem;
-  border-radius: 6px;
-  cursor: pointer;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  color: #fff;
 }
 
 .mobile-menu {
-  display: flex;
-  flex-direction: column;
-  background: rgba(10,10,10,0.98);
-  border-top: 1px solid rgba(201,162,39,0.15);
+  width: min(1180px, calc(100% - 1.5rem));
+  margin: 0.75rem auto 0;
   max-height: 0;
   overflow: hidden;
-  transition: max-height 0.4s ease, padding 0.4s ease;
-  padding: 0 2rem;
+  opacity: 0;
+  transition: max-height 0.22s ease, opacity 0.22s ease;
 }
 
 .mobile-menu.open {
-  max-height: 400px;
-  padding: 1.5rem 2rem 2rem;
+  max-height: 420px;
+  opacity: 1;
 }
 
-.mobile-menu .nav-link {
-  padding: 0.8rem 0;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-  font-size: 1.05rem;
-  width: 100%;
+.mobile-menu-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(5, 8, 22, 0.94);
+  padding: 1rem;
 }
 
-.mobile-menu .nav-link:last-of-type {
+.mobile-menu-inner .nav-link {
+  padding: 0.8rem 0.2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.mobile-menu-inner .nav-link:last-of-type {
   border-bottom: none;
 }
 
-@media (max-width: 900px) {
-  .nav-links { display: none; }
-  .nav-cta { display: none; }
-  .mobile-toggle { display: block; }
+@media (max-width: 960px) {
+  .nav-links,
+  .nav-actions {
+    display: none;
+  }
+
+  .mobile-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 </style>

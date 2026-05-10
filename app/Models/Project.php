@@ -16,6 +16,7 @@ class Project extends Model
         'tags',
         'year',
         'type',
+        'language',
         'downloads',
         'downloadUrl',
         'features',

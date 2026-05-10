@@ -31,6 +31,7 @@ class ProjectController extends Controller
             'tags' => 'nullable|array',
             'year' => 'nullable|string',
             'type' => 'nullable|string',
+            'language' => 'nullable|string',
             'downloadUrl' => 'nullable|string',
             'features' => 'nullable|array',
         ]);
@@ -67,6 +68,7 @@ class ProjectController extends Controller
             'tags' => 'nullable|array',
             'year' => 'nullable|string',
             'type' => 'nullable|string',
+            'language' => 'nullable|string',
             'downloadUrl' => 'nullable|string',
             'features' => 'nullable|array',
         ]);
@@ -93,5 +95,11 @@ class ProjectController extends Controller
         }
         $project->delete();
         return response()->noContent();
+    }
+
+    public function incrementDownloads(Project $project)
+    {
+        $project->increment('downloads');
+        return $project;
     }
 }

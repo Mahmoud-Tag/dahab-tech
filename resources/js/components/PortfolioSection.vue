@@ -1,109 +1,103 @@
 <template>
-  <section id="portfolio" class="portfolio-wrap">
-    
-    <div class="sep"></div>
-
-    <div class="portfolio-inner">
-      <!-- Section Header -->
-      <div class="section-header" data-aos="fade-up">
-        <h2 class="section-title">مشاريعنا المنفذة</h2>
-        <p class="section-subtitle">
-          نفتخر باستعراض نخبة من أعمالنا التي تم تنفيذها بأعلى معايير الجودة <br> 
-          والاحترافية لتلبي طموحات عملائنا.
+  <section id="portfolio" class="portfolio-section">
+    <div class="portfolio-shell">
+      <div class="portfolio-heading">
+        <div>
+          <span class="portfolio-kicker">أعمال مختارة</span>
+          <h2 class="section-title" style="text-align:right;">نماذج تُظهر كيف يبدو المنتج عندما تُصمم كل طبقة بعناية.</h2>
+        </div>
+        <p class="portfolio-description">
+          نعرض هنا مجموعة من المشاريع والموارد بتجارب أكثر وضوحاً، مع ترتيب بصري يساعد الزائر
+          على فهم قيمة المشروع قبل الدخول في تفاصيله.
         </p>
       </div>
 
-      <!-- Filter Tabs -->
-      <div class="filter-tabs" data-aos="fade-up" data-aos-delay="100">
-        <button 
-          v-for="tab in tabs" 
+      <div class="filter-tabs">
+        <button
+          v-for="tab in tabs"
           :key="tab.key"
-          @click="activeTab = tab.key"
+          type="button"
           :class="['filter-btn', { active: activeTab === tab.key }]"
+          @click="activeTab = tab.key"
         >
           <i :class="tab.icon"></i>
           {{ tab.label }}
         </button>
       </div>
 
-      <!-- Projects Grid -->
-      <div v-if="loading" class="flex justify-center items-center py-20">
-        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-yellow-500"></div>
+      <div v-if="loading" class="loading-grid">
+        <div v-for="item in 4" :key="item" class="loading-card"></div>
       </div>
 
-      <div v-else-if="projects.length === 0" class="text-center py-20">
-        <p class="text-gray-500 italic">لا توجد مشاريع مضافة حالياً.</p>
+      <div v-else-if="filteredProjects.length === 0" class="empty-state">
+        <i class="fas fa-folder-open"></i>
+        <h3>لا توجد عناصر مطابقة حالياً</h3>
+        <p>يمكنك تغيير الفلتر أو العودة لاحقاً بعد إضافة المشاريع من لوحة التحكم.</p>
       </div>
 
-      <div v-else>
-        <transition-group 
-          name="fade-grid" 
-          tag="div" 
-          class="projects-grid"
-        >
-          <div 
-            v-for="project in filteredProjects" 
-            :key="project.id"
-            class="project-card"
-            data-aos="zoom-in"
-          >
-            <!-- Project Image -->
-            <div class="card-img-wrap">
-              <img :src="project.image" :alt="project.title" class="card-img" />
-              
-              <!-- Hover Overlay -->
-              <div class="card-overlay">
-                <div class="overlay-content">
-                  <span class="overlay-cat">{{ project.category }}</span>
-                  <h3 class="overlay-title">{{ project.title }}</h3>
-                  <p class="overlay-desc">{{ project.desc }}</p>
-                  
-                  <div class="card-actions">
-                    <button @click="openProject(project)" class="btn-view">
-                      <i class="fas fa-eye"></i>
-                      تفاصيل المشروع
-                    </button>
-                  </div>
+      <template v-else>
+        <article v-if="featuredProject" class="featured-project">
+          <div class="featured-project__media">
+            <img :src="featuredProject.image" :alt="featuredProject.title" />
+          </div>
 
-                  <div class="overlay-tags">
-                    <span v-for="tag in project.tags" :key="tag" class="tag">{{ tag }}</span>
-                  </div>
-                </div>
-              </div>
+          <div class="featured-project__copy">
+            <div class="featured-project__chips">
+              <span>{{ featuredProject.category }}</span>
+              <span>{{ featuredProject.year || '2026' }}</span>
+              <span>{{ typeLabel(featuredProject.type) }}</span>
             </div>
 
-            <!-- Card Info -->
-            <div class="card-info">
-              <div class="card-meta">
-                <span class="card-cat-badge">
-                  <i :class="project.catIcon || 'fas fa-code'"></i>
-                  {{ project.category }}
-                </span>
-                <span class="card-year">{{ project.year }}</span>
-              </div>
-              <h3 class="card-title">{{ project.title }}</h3>
-              <div class="card-tags">
-                <span v-for="tag in (project.tags || []).slice(0, 3)" :key="tag" class="tag-small">{{ tag }}</span>
-              </div>
+            <h3>{{ featuredProject.title }}</h3>
+            <p>{{ featuredProject.fullDesc || featuredProject.desc }}</p>
+
+            <div class="featured-project__tags">
+              <span v-for="lang in (featuredProject.language || '').split(',').map(l => l.trim()).filter(Boolean)" :key="lang" class="lang-badge-sm">{{ lang }}</span>
+            </div>
+
+            <div class="featured-project__actions">
+              <button type="button" class="btn-gold" @click="openProject(featuredProject)">
+                <i class="fas fa-eye"></i>
+                تفاصيل المشروع
+              </button>
+              <a href="#contact" class="btn-outline-gold">أريد مشروعاً مشابهاً</a>
             </div>
           </div>
-        </transition-group>
+        </article>
+
+        <div class="project-grid">
+          <article
+            v-for="project in secondaryProjects"
+            :key="project.id"
+            class="project-card"
+            @click="openProject(project)"
+          >
+            <div class="project-card__media">
+              <img :src="project.image" :alt="project.title" />
+            </div>
+
+            <div class="project-card__copy">
+              <div class="project-card__meta">
+                <span>{{ project.category }}</span>
+                <span>{{ typeLabel(project.type) }}</span>
+              </div>
+              <h3>{{ project.title }}</h3>
+              <p>{{ project.desc }}</p>
+              <div class="project-card__tags">
+                <span v-for="lang in (project.language || '').split(',').map(l => l.trim()).filter(Boolean)" :key="lang" class="lang-badge-sm">{{ lang }}</span>
+              </div>
+            </div>
+          </article>
+        </div>
+      </template>
+
+      <div class="portfolio-cta">
+        <p>إذا كانت لديك فكرة مشابهة، يمكننا تحويلها إلى تجربة رقمية متكاملة خاصة بعلامتك.</p>
+        <a href="#contact" class="btn-gold">ابدأ مشروعك الآن</a>
       </div>
 
-      <!-- CTA or Contact -->
-      <div class="portfolio-cta" data-aos="fade-up">
-        <p class="text-gray-400 mb-6">هل لديك مشروع ترغب في تنفيذه؟ نحن هنا لنحول فكرتك إلى واقع.</p>
-        <a href="#contact" class="btn-primary">ابدأ مشروعك الآن</a>
-      </div>
+      <ProjectModal :is-open="isModalOpen" :project="selectedProject" @close="closeModal" />
     </div>
-
-    <!-- Project Modal Detail -->
-    <ProjectModal
-      :is-open="isModalOpen"
-      :project="selectedProject"
-      @close="closeModal"
-    />
-
   </section>
 </template>
 
@@ -118,11 +112,38 @@ const selectedProject = ref(null)
 const projects = ref([])
 const loading = ref(true)
 
+const fallbackImages = {
+  web: '/portfolio-website.png',
+  app: '/portfolio-app.png',
+  system: '/portfolio-system.png',
+  ecommerce: '/portfolio-ecommerce.png',
+  ai: '/portfolio-system.png',
+  resource: '/portfolio-system.png',
+}
+
+const normalizeArray = (value) => {
+  if (Array.isArray(value)) return value
+  if (typeof value === 'string' && value.trim()) {
+    try {
+      const parsed = JSON.parse(value)
+      return Array.isArray(parsed) ? parsed : []
+    } catch {
+      return value.split(',').map((item) => item.trim()).filter(Boolean)
+    }
+  }
+  return []
+}
+
 const fetchProjects = async () => {
   loading.value = true
   try {
     const { data } = await axios.get('/api/projects')
-    projects.value = data
+    projects.value = data.map((project) => ({
+      ...project,
+      image: project.image || fallbackImages[project.type] || '/portfolio-website.png',
+      tags: normalizeArray(project.tags),
+      features: normalizeArray(project.features),
+    }))
   } catch (err) {
     console.error('Error fetching projects:', err)
   } finally {
@@ -139,335 +160,263 @@ const openProject = (project) => {
 
 const closeModal = () => {
   isModalOpen.value = false
-  setTimeout(() => { selectedProject.value = null }, 300)
+  setTimeout(() => {
+    selectedProject.value = null
+  }, 250)
 }
 
 const tabs = [
-  { key: 'all',      label: 'الكل',              icon: 'fas fa-th' },
-  { key: 'web',      label: 'مواقع ويب',         icon: 'fas fa-globe' },
-  { key: 'app',      label: 'تطبيقات',           icon: 'fas fa-mobile-alt' },
-  { key: 'system',   label: 'أنظمة إدارة',       icon: 'fas fa-cogs' },
-  { key: 'ecommerce',label: 'متاجر إلكترونية',   icon: 'fas fa-shopping-cart' },
-  { key: 'ai',       label: 'ذكاء اصطناعي',      icon: 'fas fa-robot' },
-  { key: 'resource', label: 'المصادر والأدوات',  icon: 'fas fa-box-open' },
+  { key: 'all', label: 'الكل', icon: 'fas fa-grid-2' },
+  { key: 'web', label: 'المواقع', icon: 'fas fa-globe' },
+  { key: 'app', label: 'التطبيقات', icon: 'fas fa-mobile-screen-button' },
+  { key: 'system', label: 'الأنظمة', icon: 'fas fa-chart-line' },
+  { key: 'ecommerce', label: 'المتاجر', icon: 'fas fa-bag-shopping' },
+  { key: 'resource', label: 'المصادر', icon: 'fas fa-box-open' },
 ]
 
 const filteredProjects = computed(() =>
   activeTab.value === 'all'
     ? projects.value
-    : projects.value.filter(p => p.type === activeTab.value)
+    : projects.value.filter((project) => project.type === activeTab.value),
 )
+
+const featuredProject = computed(() => filteredProjects.value[0] || null)
+const secondaryProjects = computed(() => filteredProjects.value.slice(1, 7))
+
+const typeLabel = (type) => ({
+  web: 'ويب',
+  app: 'تطبيق',
+  system: 'نظام',
+  ecommerce: 'متجر',
+  ai: 'AI',
+  resource: 'مورد',
+}[type] || 'منتج')
 </script>
 
 <style scoped>
-.portfolio-wrap {
-  background: #0d0d0d;
+.portfolio-section {
   padding: 5rem 0;
-}
-
-.sep {
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(201,162,39,0.4), transparent);
-}
-
-.portfolio-inner {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 4rem 2rem 2rem;
-}
-
-.section-header { text-align: center; margin-bottom: 3rem; }
-
-.section-title {
-  font-size: 2.2rem;
-  font-weight: 800;
-  color: #f0c240;
-  margin-bottom: 0.6rem;
-  display: inline-block;
   position: relative;
 }
 
-.section-title::after {
-  content: '';
-  display: block;
-  width: 60px;
-  height: 3px;
-  background: linear-gradient(90deg, #f0c240, #c9a227);
-  margin: 0.6rem auto 0;
-  border-radius: 2px;
+.portfolio-shell {
+  width: min(1180px, calc(100% - 2rem));
+  margin: 0 auto;
 }
 
-.section-subtitle {
-  color: #777;
-  font-size: 1rem;
-  margin-top: 0.75rem;
-  line-height: 1.7;
+.portfolio-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.portfolio-kicker {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.45rem 0.95rem;
+  border-radius: 999px;
+  background: rgba(240, 194, 64, 0.08);
+  border: 1px solid rgba(240, 194, 64, 0.2);
+  color: #f1d27d;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  margin-bottom: 0.2rem;
+}
+
+.portfolio-description {
+  max-width: 420px;
+  color: #9ea7bc;
+  line-height: 1.9;
+}
+
+.filter-tabs,
+.featured-project__chips,
+.featured-project__tags,
+.featured-project__actions,
+.project-card__meta,
+.project-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-top: 0.5rem;
 }
 
 .filter-tabs {
-  display: flex;
-  justify-content: center;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-  margin-bottom: 3rem;
+  margin-bottom: 1.5rem;
 }
 
-.filter-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1.25rem;
-  border-radius: 100px;
-  border: 1.5px solid rgba(201,162,39,0.25);
-  background: transparent;
-  color: #888;
-  font-family: 'Cairo', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.filter-btn:hover {
-  border-color: rgba(201,162,39,0.5);
-  color: #f0c240;
+.filter-btn,
+.featured-project__chips span,
+.featured-project__tags span,
+.project-card__meta span,
+.project-card__tags span {
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: #d9deea;
+  padding: 0.7rem 1rem;
+  font-weight: 700;
 }
 
 .filter-btn.active {
-  background: linear-gradient(135deg, rgba(201,162,39,0.2), rgba(201,162,39,0.05));
-  border-color: #f0c240;
+  background: rgba(240, 194, 64, 0.12);
+  border-color: rgba(240, 194, 64, 0.24);
   color: #f0c240;
-  box-shadow: 0 0 15px rgba(201,162,39,0.15);
 }
 
-.projects-grid {
+.lang-badge-sm {
+  background: rgba(201, 162, 39, 0.1) !important;
+  border-color: rgba(201, 162, 39, 0.3) !important;
+  color: #f0c240 !important;
+  font-size: 0.75rem !important;
+  padding: 0.3rem 0.7rem !important;
+}
+
+.featured-project,
+.project-card,
+.loading-card,
+.empty-state {
+  border-radius: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 22px 80px rgba(0, 0, 0, 0.28);
+}
+
+.loading-grid,
+.project-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 2rem;
-  margin-bottom: 3.5rem;
+  gap: 1rem;
 }
 
-.project-card {
-  background: #111;
-  border: 1px solid rgba(201,162,39,0.15);
-  border-radius: 20px;
+.loading-grid {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.loading-card {
+  height: 280px;
+  animation: pulse 1.3s ease-in-out infinite;
+}
+
+.featured-project {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
   overflow: hidden;
-  transition: border-color 0.35s, transform 0.35s, box-shadow 0.35s;
-}
-
-.project-card:hover {
-  border-color: rgba(201,162,39,0.5);
-  transform: translateY(-6px);
-  box-shadow: 0 16px 45px rgba(0,0,0,0.5), 0 0 25px rgba(201,162,39,0.1);
-}
-
-.card-img-wrap {
-  position: relative;
-  overflow: hidden;
-  aspect-ratio: 16 / 9;
-}
-
-.card-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.5s ease;
-  display: block;
-}
-
-.project-card:hover .card-img {
-  transform: scale(1.06);
-}
-
-.card-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg,
-    rgba(0,0,0,0.3) 0%,
-    rgba(0,0,0,0.85) 100%
-  );
-  display: flex;
-  align-items: flex-end;
-  padding: 1.75rem;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-}
-
-.project-card:hover .card-overlay {
-  opacity: 1;
-}
-
-.overlay-content {
-  transform: translateY(12px);
-  transition: transform 0.4s ease;
-}
-
-.project-card:hover .overlay-content {
-  transform: translateY(0);
-}
-
-.overlay-cat {
-  display: inline-block;
-  background: rgba(201,162,39,0.25);
-  border: 1px solid rgba(201,162,39,0.5);
-  color: #f0c240;
-  font-size: 0.75rem;
-  font-weight: 700;
-  padding: 0.2rem 0.75rem;
-  border-radius: 100px;
-  margin-bottom: 0.6rem;
-}
-
-.overlay-title {
-  font-size: 1.2rem;
-  font-weight: 800;
-  color: #fff;
-  margin-bottom: 0.5rem;
-}
-
-.overlay-desc {
-  font-size: 0.85rem;
-  color: #ccc;
-  line-height: 1.6;
-  margin-bottom: 0.75rem;
-}
-
-.overlay-tags {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
-
-.tag {
-  background: rgba(201,162,39,0.15);
-  border: 1px solid rgba(201,162,39,0.3);
-  color: #f0c240;
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 0.2rem 0.65rem;
-  border-radius: 100px;
-}
-
-.card-actions {
   margin-bottom: 1rem;
 }
 
-.btn-view {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: #f0c240;
-  color: #000;
-  border: none;
-  padding: 0.6rem 1.25rem;
-  border-radius: 8px;
-  font-weight: 700;
-  font-family: 'Cairo', sans-serif;
-  font-size: 0.85rem;
+.featured-project__media {
+  min-height: 440px;
+}
+
+.featured-project__media img,
+.project-card__media img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.featured-project__copy {
+  padding: 1.6rem;
+}
+
+.featured-project__copy h3 {
+  color: #fff;
+  font-size: 2rem;
+  margin: 1rem 0;
+}
+
+.featured-project__copy p,
+.project-card__copy p,
+.empty-state p,
+.portfolio-cta p {
+  color: #9ea7bc;
+  line-height: 1.9;
+}
+
+.project-grid {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.project-card {
+  overflow: hidden;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: transform 0.22s ease, border-color 0.22s ease;
 }
 
-.btn-view:hover {
-  background: #fff;
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(240,194,64,0.3);
+.project-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(240, 194, 64, 0.24);
 }
 
-.card-info {
-  padding: 1.4rem 1.6rem 1.6rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.65rem;
+.project-card__media {
+  aspect-ratio: 16 / 10;
 }
 
-.card-meta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.project-card__copy {
+  padding: 1.2rem;
 }
 
-.card-cat-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-size: 0.78rem;
-  color: rgba(201,162,39,0.75);
-  font-weight: 600;
+.project-card__copy h3 {
+  color: #fff;
+  margin: 0.85rem 0 0.6rem;
+  font-size: 1.15rem;
 }
 
-.card-year {
-  font-size: 0.78rem;
-  color: #555;
-  font-weight: 600;
+.empty-state {
+  padding: 3rem 1.5rem;
+  text-align: center;
 }
 
-.card-title {
-  font-size: 1.05rem;
-  font-weight: 800;
-  color: #e8e8e8;
-  line-height: 1.4;
+.empty-state i {
+  color: #f0c240;
+  font-size: 2rem;
+  margin-bottom: 1rem;
 }
 
-.card-tags {
-  display: flex;
-  gap: 0.4rem;
-  flex-wrap: wrap;
-}
-
-.tag-small {
-  background: rgba(201,162,39,0.07);
-  border: 1px solid rgba(201,162,39,0.18);
-  color: #888;
-  font-size: 0.72rem;
-  font-weight: 600;
-  padding: 0.15rem 0.6rem;
-  border-radius: 100px;
+.empty-state h3 {
+  color: #fff;
+  margin: 0 0 0.75rem;
 }
 
 .portfolio-cta {
+  margin-top: 2rem;
   text-align: center;
-  padding-top: 1rem;
 }
 
-.fade-grid-enter-active,
-.fade-grid-leave-active {
-  transition: opacity 0.35s ease, transform 0.35s ease;
+.portfolio-cta .btn-gold {
+  margin-top: 1rem;
 }
-.fade-grid-enter-from,
-.fade-grid-leave-to {
-  opacity: 0;
-  transform: scale(0.95) translateY(10px);
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+
+@media (max-width: 1100px) {
+  .featured-project,
+  .portfolio-heading {
+    grid-template-columns: 1fr;
+    display: grid;
+  }
+
+  .project-grid,
+  .loading-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (max-width: 768px) {
-  .projects-grid { grid-template-columns: 1fr; }
-}
+  .project-grid,
+  .loading-grid {
+    grid-template-columns: 1fr;
+  }
 
-.btn-primary {
-  display: inline-block;
-  background: #f0c240;
-  color: #000;
-  font-weight: 700;
-  padding: 1rem 2.5rem;
-  border-radius: 50px;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  font-family: 'Cairo', sans-serif;
-}
-
-.btn-primary:hover {
-  background: #fff;
-  transform: translateY(-3px);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-}
-
-.animate-spin {
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  .featured-project__media {
+    min-height: 280px;
+  }
 }
 </style>

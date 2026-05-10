@@ -1,6 +1,6 @@
 <template>
-  <div class="fixed inset-0 bg-black/80 backdrop-blur-md z-100 flex items-center justify-center p-4 overflow-y-auto">
-    <div class="bg-gray-900 border border-gray-800 rounded-3xl w-full max-w-2xl my-auto shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
+  <div class="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-black/80 p-4 backdrop-blur-md" @click.self="$emit('close')">
+    <div class="my-auto w-full max-w-2xl overflow-hidden rounded-3xl border border-gray-800 bg-gray-900 shadow-2xl">
       <div class="p-6 border-b border-gray-800 flex justify-between items-center">
         <h2 class="text-2xl font-bold text-yellow-500">{{ project ? 'تعديل مشروع' : 'إضافة مشروع جديد' }}</h2>
         <button @click="$emit('close')" class="text-gray-400 hover:text-white transition">
@@ -32,6 +32,10 @@
               <option value="ai">ذكاء اصطناعي</option>
               <option value="resource">مصدر / أداة (Resource)</option>
             </select>
+          </div>
+          <div class="space-y-1">
+            <label class="text-sm text-gray-400">اللغات المستخدمة (افصل بينها بفاصلة , )</label>
+            <input v-model="form.language" placeholder="مثال: PHP, Vue, React, MySQL" class="w-full bg-black border border-gray-800 p-3 rounded-xl outline-none focus:border-yellow-500 transition text-white">
           </div>
         </div>
 
@@ -91,6 +95,7 @@ const form = ref({
   fullDesc: '',
   year: '',
   type: 'web',
+  language: '',
   downloadUrl: '',
   image: null,
   tags: [],
@@ -108,6 +113,7 @@ onMounted(() => {
     form.value.fullDesc = props.project.fullDesc || ''
     form.value.year = props.project.year || ''
     form.value.type = props.project.type || 'web'
+    form.value.language = props.project.language || ''
     form.value.downloadUrl = props.project.downloadUrl || ''
     form.value.tags = props.project.tags || []
     form.value.features = props.project.features || []
@@ -128,6 +134,11 @@ const handleFile = (e) => {
 const save = async () => {
   loading.value = true
   const token = localStorage.getItem('admin_token')
+  if (!token) {
+    localStorage.removeItem('admin_token')
+    window.location.href = '/admin/login'
+    return
+  }
   const formData = new FormData()
 
   // Basic fields
@@ -137,6 +148,7 @@ const save = async () => {
   formData.append('fullDesc', form.value.fullDesc)
   formData.append('year', form.value.year)
   formData.append('type', form.value.type)
+  formData.append('language', form.value.language)
   formData.append('downloadUrl', form.value.downloadUrl)
 
   // Handle file
@@ -165,6 +177,11 @@ const save = async () => {
     emit('close')
   } catch (err) {
     console.error('Error saving project:', err.response?.data || err.message)
+    if (err?.response?.status === 401) {
+      localStorage.removeItem('admin_token')
+      window.location.href = '/admin/login'
+      return
+    }
     alert('حدث خطأ أثناء الحفظ: ' + (err.response?.data?.message || err.message))
   } finally {
     loading.value = false
