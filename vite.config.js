@@ -12,14 +12,25 @@ export default defineConfig({
         vue(),
         tailwindcss(),
     ],
+    build: {
+        rollupOptions: {
+            output: {
+                manualChunks(id) {
+                    if (id.includes('node_modules')) {
+                        if (id.includes('three')) {
+                            return 'three';
+                        }
+                        return 'vendor';
+                    }
+                }
+            }
+        },
+        chunkSizeWarningLimit: 1000,
+    },
     resolve: {
         alias: {
             vue: 'vue/dist/vue.esm-bundler.js',
-        },
-    },
-    server: {
-        watch: {
-            ignored: ['**/storage/framework/views/**'],
+            '@': '/resources/js',
         },
     },
 });
